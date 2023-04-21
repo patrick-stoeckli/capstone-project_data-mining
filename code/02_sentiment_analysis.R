@@ -31,7 +31,7 @@ library(httr) # for curl requests
 library(rjson)
 
 # Set your OpenAI API key
-api_key <- "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"
+api_key <- readLines("credentials/openAI_api-key.txt", n = 1, warn = FALSE)
 
 # Define the sentiment-related prompt
 prompt <- "What is the sentiment of the following text using just one word?\nText:"
