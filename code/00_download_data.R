@@ -30,6 +30,15 @@ save(BusinessRole, file = 'data/data_raw/BusinessRole_raw.Rdata')
 
 ###
 
+MemberParty <- swissparl::get_data(   #PersonIdCode
+  table = "MemberParty",
+  Language = "DE"
+) 
+
+save(MemberParty, file = 'data/data_raw/MemberParty_raw.Rdata') 
+
+####
+
 MemberParlGroup <- swissparl::get_data(   #PersonIdCode
   table = "MemberParlGroup",
   Language = "DE"
