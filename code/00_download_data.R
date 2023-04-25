@@ -47,31 +47,3 @@ ParlGroup <- swissparl::get_data(
 save(MemberParty, file = 'data/data_raw/ParlGroup_raw.Rdata') 
 
 ###
-
-
-
-
-
-
-
-
-
-# Business2 <- swissparl::get_data(
-#   table = "Business", 
-#   BusinessTypeName = "Motion", 
-#   BusinessShortNumber = as.numeric(df3$BusinessShortNumber), 
-#   Language = "DE")
-# 
-# Business2 <- swissparl::get_data(
-#   table = "Business", 
-#   SubmittedBy = "Badran Jacqueline", 
-#   Language = "DE")
-
-# Party <- swissparl::get_data("Party", Language = "DE")
-# Person <- swissparl::get_data("Person", Language = "DE")
-
-# df2 <- swissparl::get_data(
-#   table = "Meeting",
-#   LegislativePeriodNumber = 49,
-#   Language = "DE"
-# )
