@@ -37,9 +37,16 @@ MemberParty <- swissparl::get_data(   #PersonIdCode
 
 save(MemberParty, file = 'data/data_raw/MemberParty_raw.Rdata') 
 
+###
 
+ParlGroup <- swissparl::get_data(
+  table="ParlGroup",
+  Language = "DE"
+)
 
+save(MemberParty, file = 'data/data_raw/ParlGroup_raw.Rdata') 
 
+###
 
 
 
