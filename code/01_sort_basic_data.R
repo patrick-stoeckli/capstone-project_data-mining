@@ -14,10 +14,16 @@ SubjectBusiness <- SubjectBusiness %>%
   filter(BusinessNumber %in% BusinessResponsibility$BusinessNumber) %>%
   select(IdSubject, BusinessNumber, TitleDE)
 
+# BusinessRole <- BusinessRole %>%            #MemberCouncilNumber
+#   filter(BusinessNumber %in% SubjectBusiness$BusinessNumber) %>%
+#   #filter(BusinessTypeName == "Motion")
+#   select(BusinessNumber, MemberCouncilNumber, BusinessShortNumber, BusinessTitle, BusinessType, BusinessTypeName)
+
 BusinessRole <- BusinessRole %>%            #MemberCouncilNumber
   filter(BusinessNumber %in% SubjectBusiness$BusinessNumber) %>%
+  filter(RoleName == "Urheber(-in)") %>%
   #filter(BusinessTypeName == "Motion")
-  select(BusinessNumber, MemberCouncilNumber, BusinessShortNumber, BusinessTitle, BusinessType, BusinessTypeName)
+  select(BusinessNumber, MemberCouncilNumber, ParlGroupNumber, CantonNumber, CommitteeNumber, BusinessShortNumber, BusinessTitle, BusinessType, BusinessTypeName)
 
 MemberParty <- MemberParty %>%
   select(PersonIdCode, FirstName, LastName, PartyNumber, PartyName, PartyAbbreviation)
