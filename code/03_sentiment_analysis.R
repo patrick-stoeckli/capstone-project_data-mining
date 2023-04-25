@@ -1,37 +1,32 @@
+library(httr) 
+library(rjson)
+library(xml2)
+
 load(file = 'data/data_raw/speeches_raw.Rdata') 
 load(file = 'data/data_raw/Basic_raw.Rdata') 
 
-# Set the seed for reproducibility
-set.seed(123)
+speeches_NR <- v50 %>% 
+  filter(IdSubject %in% df3$IdSubject) %>%
+  filter(SpeakerFunction == "Mit-M" | SpeakerFunction == "Mit-F") %>%
+  filter(CouncilName == "Nationalrat")
 
-# Define the number of observations
-n_obs <- 5
+speeches_SR <- v50 %>% 
+  filter(IdSubject %in% df3$IdSubject) %>%
+  filter(SpeakerFunction == "Mit-M" | SpeakerFunction == "Mit-F") %>%
+  filter(CouncilName == "Ständerat")       
 
-# Generate random sentences
-sentences <- c(
-  "The quick brown fox jumps over the lazy dog.",
-  "A watched pot never boils.",
-  "Actions speak louder than words.",
-  "All is fair in love and war.",
-  "Better late than never.",
-  "Curiosity killed the cat.",
-  "Don't count your chickens before they hatch."
-)
+for (i in 1:length(speeches_NR$Text)) {
+  # Umwandlung des XML-Texts in normalen Text
+  speeches_NR$Text[i] <- xml_text(read_xml(speeches_NR$Text[i]), "//p")
+}
 
-# Generate random numbers
-numbers <- sample(1:100, n_obs, replace = TRUE)
-
-# Combine the sentences and numbers into a data frame
-df <- data.frame(
-  sentence = sample(sentences, n_obs, replace = TRUE),
-  number = numbers
-)
-
-# Print the data frame
-print(df)
-
-library(httr) # for curl requests
-library(rjson)
+# NA
+# "P-F" "P-M"                  
+# "1VP-F" "1VP-M"
+# "2VP-F" "2VP-M"
+# "BR-F"
+# "VPBR-F"   
+# "BPR-F"
 
 # Set your OpenAI API key
 api_key <- readLines("credentials/openAI_api-key.txt", n = 1, warn = FALSE)
