@@ -1,6 +1,7 @@
 library(httr) 
 library(rjson)
 library(xml2)
+library(tidyverse)
 
 load(file = 'data/data_raw/speeches_raw.Rdata') 
 load(file = 'data/data_raw/Basic_raw.Rdata') 
@@ -18,6 +19,11 @@ speeches_SR <- v50 %>%
 for (i in 1:length(speeches_NR$Text)) {
   # Umwandlung des XML-Texts in normalen Text
   speeches_NR$Text[i] <- xml_text(read_xml(speeches_NR$Text[i]), "//p")
+}
+
+for (i in 1:length(speeches_SR$Text)) {
+  # Umwandlung des XML-Texts in normalen Text
+  speeches_SR$Text[i] <- xml_text(read_xml(speeches_SR$Text[i]), "//p")
 }
 
 # NA
@@ -55,3 +61,7 @@ for (i in 1:nrow(df)){
   df$output_text[i] <- parsed_response$choices$message$content
   Sys.sleep(20)
 }
+
+
+  
+
