@@ -3,23 +3,33 @@ library(rjson)
 library(xml2)
 library(tidyverse)
 
-load(file = 'data/data_raw/speeches_raw.Rdata') 
 load(file = 'data/data_raw/Basic_raw.Rdata') 
 
+Basic <- Basic_raw %>% 
+  select(IdSubject, TitleDE, FirstName, LastName, ParlGroupName) 
+
+load(file = 'data/data_raw/speeches_raw.Rdata') 
+
 speeches_NR <- v50 %>% 
-  filter(IdSubject %in% df3$IdSubject) %>%
+  filter(IdSubject %in% Basic_raw$IdSubject) %>%
   filter(SpeakerFunction == "Mit-M" | SpeakerFunction == "Mit-F") %>%
-  filter(CouncilName == "Nationalrat")
+  filter(CouncilName == "Nationalrat") %>%
+  select(IdSubject, PersonNumber, SpeakerFullName, ParlGroupName, Text) %>%
+  rename(SpeakerPersonNumber = PersonNumber) %>%
+  rename(SpeakerParlGroupName = ParlGroupName) %>%
+  rename(SpeakerText= Text) 
+
+for (i in 1:length(speeches_NR$SpeakerText)) {
+  # Umwandlung des XML-Texts in normalen Text
+  speeches_NR$SpeakerText[i] <- xml_text(read_xml(speeches_NR$SpeakerText[i]), "//p")
+}
+
+first_try <- merge(speeches_NR, Basic, by = "IdSubject", all.x = TRUE) 
 
 speeches_SR <- v50 %>% 
-  filter(IdSubject %in% df3$IdSubject) %>%
+  filter(IdSubject %in% Basic_raw$IdSubject) %>%
   filter(SpeakerFunction == "Mit-M" | SpeakerFunction == "Mit-F") %>%
   filter(CouncilName == "Ständerat")       
-
-for (i in 1:length(speeches_NR$Text)) {
-  # Umwandlung des XML-Texts in normalen Text
-  speeches_NR$Text[i] <- xml_text(read_xml(speeches_NR$Text[i]), "//p")
-}
 
 for (i in 1:length(speeches_SR$Text)) {
   # Umwandlung des XML-Texts in normalen Text
@@ -38,11 +48,13 @@ for (i in 1:length(speeches_SR$Text)) {
 api_key <- readLines("credentials/openAI_api-key.txt", n = 1, warn = FALSE)
 
 # Define the sentiment-related prompt
-prompt <- "What is the sentiment of the following text using just one word?\nText:"
+prompt <- "What is the sentiment of the following text using a number between -1 and 1? -1 is very negative, 1 is very positive. Please only print the number itself: \nText:"
+
+first_try$value <- rep(0, 301)
 
 # Call the OpenAI API to generate output text based on the combined text
-for (i in 1:nrow(df)){
-  input_text <- df$sentence[i]                      # Define the input text for sentiment analysis
+for (i in 1:nrow(first_try)){
+  input_text <- first_try$SpeakerText[i]            # Define the input text for sentiment analysis
   combined_text <- paste(prompt, input_text)        # Combine the prompt and input text
   response <- httr::POST(
     url = "https://api.openai.com/v1/chat/completions", 
@@ -58,10 +70,12 @@ for (i in 1:nrow(df)){
     )
   )
   parsed_response <- fromJSON(httr::content(response, as = "text"))
-  df$output_text[i] <- parsed_response$choices$message$content
+  first_try$value[i] <- parsed_response$choices[[1]]$message$content
+  print(i)
   Sys.sleep(20)
 }
 
+save(first_try, file = 'data/data_raw/first_try.Rdata') 
 
   
 
