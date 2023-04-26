@@ -56,3 +56,19 @@ ParlGroup <- swissparl::get_data(
 save(MemberParty, file = 'data/data_raw/ParlGroup_raw.Rdata') 
 
 ###
+
+Rapporteur <-  swissparl::get_data(
+  table="Rapporteur",
+  Language = "DE",
+)
+
+save(Rapporteur, file = 'data/data_raw/Rapporteur_raw.Rdata') 
+
+###
+
+MemberCouncil <-  swissparl::get_data(
+  table="MemberCouncil",
+  Language = "DE",
+)
+
+save(MemberCouncil, file = 'data/data_raw/MemberCouncil_raw.Rdata') 
