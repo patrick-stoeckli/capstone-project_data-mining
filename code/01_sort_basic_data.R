@@ -10,11 +10,11 @@ load('data/data_raw//Rapporteur_raw.Rdata')
 load('data/data_raw//MemberCouncil_raw.Rdata')
 
 BusinessResponsibility <- BusinessResponsibility %>% 
-  filter(DepartmentNumber == 9) %>% 
+  #filter(DepartmentNumber == 9) %>% 
   select(BusinessNumber)
 
 SubjectBusiness <- SubjectBusiness %>% 
-  filter(BusinessNumber %in% BusinessResponsibility$BusinessNumber) %>%
+  #filter(BusinessNumber %in% BusinessResponsibility$BusinessNumber) %>%
   select(IdSubject, BusinessNumber, TitleDE)
 
 # BusinessRole <- BusinessRole %>%            #MemberCouncilNumber
@@ -48,6 +48,6 @@ Rapporteur <- Rapporteur %>%
 
 df2 <- merge(Rapporteur, MemberCouncil, by = c("FirstName", "LastName"), all.x = TRUE)
 
-Basic_raw <- merge(df1, df2, by = "MemberCouncilNumber", all.x = TRUE)
+Basic_data_raw <- merge(df1, df2, by = "MemberCouncilNumber", all.x = TRUE)
 
-save(Basic_raw, file = 'data/data_raw/Basic_raw.Rdata') 
+save(Basic_data_raw, file = 'data/data_raw/Basic_data_raw.Rdata') 
