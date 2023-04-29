@@ -37,34 +37,38 @@ MemberParty <- swissparl::get_data(   #PersonIdCode
 
 save(MemberParty, file = 'data/data_raw/MemberParty_raw.Rdata') 
 
+####
 
+MemberParlGroup <- swissparl::get_data(   #PersonIdCode
+  table = "MemberParlGroup",
+  Language = "DE"
+) 
 
+save(MemberParlGroup, file = 'data/data_raw/MemberParlGroup_raw.Rdata') 
 
+###
 
+ParlGroup <- swissparl::get_data(
+  table="ParlGroup",
+  Language = "DE"
+)
 
+save(MemberParty, file = 'data/data_raw/ParlGroup_raw.Rdata') 
 
+###
 
+Rapporteur <-  swissparl::get_data(
+  table="Rapporteur",
+  Language = "DE",
+)
 
+save(Rapporteur, file = 'data/data_raw/Rapporteur_raw.Rdata') 
 
+###
 
+MemberCouncil <-  swissparl::get_data(
+  table="MemberCouncil",
+  Language = "DE",
+)
 
-
-# Business2 <- swissparl::get_data(
-#   table = "Business", 
-#   BusinessTypeName = "Motion", 
-#   BusinessShortNumber = as.numeric(df3$BusinessShortNumber), 
-#   Language = "DE")
-# 
-# Business2 <- swissparl::get_data(
-#   table = "Business", 
-#   SubmittedBy = "Badran Jacqueline", 
-#   Language = "DE")
-
-# Party <- swissparl::get_data("Party", Language = "DE")
-# Person <- swissparl::get_data("Person", Language = "DE")
-
-# df2 <- swissparl::get_data(
-#   table = "Meeting",
-#   LegislativePeriodNumber = 49,
-#   Language = "DE"
-# )
+save(MemberCouncil, file = 'data/data_raw/MemberCouncil_raw.Rdata') 

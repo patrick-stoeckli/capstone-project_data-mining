@@ -59,7 +59,7 @@ sessions50$ID <- as.character(sessions50$ID)
 get_voting_buffered <- function(id) {
   
   # Create folder
-  folder <- "data/data_raw/voting50"
+  folder <- "data/data_raw/speeches50"
   if(!dir.exists(folder)) dir.create(folder)
   
   # Download
@@ -76,9 +76,9 @@ get_voting_buffered <- function(id) {
 purrr::walk(sessions50$ID, get_voting_buffered)
 
 # Combine to One Dataset
-v50 <- purrr::map_dfr(list.files("data/data_raw/voting50", full.names = T), readRDS)
+speeches50 <- purrr::map_dfr(list.files("data/data_raw/speeches50", full.names = T), readRDS)
 
-save(v50, file = 'data/data_raw/speeches_raw.Rdata') 
+save(speeches50, file = 'data/data_raw/speeches_raw.Rdata') 
 
 
 # # Get Session IDs
@@ -87,27 +87,26 @@ save(v50, file = 'data/data_raw/speeches_raw.Rdata')
 # 
 # # Define Function
 # get_voting_buffered <- function(id) {
-#   
+# 
 #   # Create folder
-#   folder <- "data/data_raw/voting50"
+#   folder <- "data/data_raw/speeches50"
 #   if(!dir.exists(folder)) dir.create(folder)
-#   
+# 
 #   # Download
 #   dt <- swissparl::get_data(table = "Transcript", Language = "DE", IdSession = id, IdSubject = as.numeric(df3$IdSubject))
-#   
+# 
 #   #dt <- swissparl::get_data("Voting", Language = "DE", IdSession = id)
-#   
+# 
 #   # Save
 #   saveRDS(dt, paste0(folder, "/", id, ".rds"))
-#   
+# 
 # }
 # 
 # # Apply Function to Session IDs
 # purrr::walk(sessions50$ID, get_voting_buffered)
 # 
 # # Combine to One Dataset
-# v60 <- purrr::map_dfr(list.files("data/data_raw/voting50", full.names = T), readRDS)
+# speeches50 <- purrr::map_dfr(list.files("data/data_raw/speeches50", full.names = T), readRDS)
 # 
-# save(v50, file = 'data/data_raw/speeches_raw.Rdata') 
-# save(v60, file = 'data/data_raw/speeches_raw.Rdata') 
+# save(speeches50, file = 'data/data_raw/speeches_raw.Rdata')
 
