@@ -54,31 +54,3 @@ save(Rapporteur, file = 'data/data_raw/Rapporteur_raw.Rdata')
 
 #########################################################################
 #########################################################################
-
-##Get data from the table 'MemberParty': -> Additional data that was not used
-# MemberParty <- swissparl::get_data(   
-#   table = "MemberParty",
-#   Language = "DE"
-# ) 
-# save(MemberParty, file = 'data/data_raw/MemberParty_raw.Rdata') 
-
-#########################################################################
-
-##Get data from the table 'MemberParlGroup': -> Additional data that was not used
-# MemberParlGroup <- swissparl::get_data(   
-#   table = "MemberParlGroup",
-#   Language = "DE"
-# ) 
-# save(MemberParlGroup, file = 'data/data_raw/MemberParlGroup_raw.Rdata') 
-
-#########################################################################
-
-##Get data from the table 'ParlGroup': -> Additional data that was not used
-# ParlGroup <- swissparl::get_data(
-#   table="ParlGroup",
-#   Language = "DE"
-# )
-# save(MemberParty, file = 'data/data_raw/ParlGroup_raw.Rdata') 
-
-#########################################################################
-#########################################################################
