@@ -1,74 +1,84 @@
-library("swissparl")
+#Install the package 'swissparl', see documentation: https://github.com/zumbov2/swissparl
+install.packages("swissparl")
 
-####
+#Load package 'swissparl'
+library(swissparl)
 
+#########################################################################
+#########################################################################
+
+#Get data from the table 'BusinessResponsibility': -> BusinessNumber; DepartmentNumber
 BusinessResponsibility <- swissparl::get_data(
   table = "BusinessResponsibility",
   Language = "DE"
 )
-
 save(BusinessResponsibility, file = 'data/data_raw/BusinessResponsibility_raw.Rdata')
 
-####
+#########################################################################
 
+#Get data from the table 'SubjectBusiness': -> IdSubject; BusinessNumber; TitleDE
 SubjectBusiness <- swissparl::get_data(
   table = "SubjectBusiness",
   Language = "DE"
 )
-
 save(SubjectBusiness, file = 'data/data_raw/SubjectBusiness_raw.Rdata')
 
-####
+#########################################################################
 
-BusinessRole <- swissparl::get_data(  #MemberCouncilNumber
+#Get data from the table 'BusinessRole': -> MemberCouncilNumber
+BusinessRole <- swissparl::get_data(  
   table = "BusinessRole",     
   Language = "DE",
   BusinessTypeName = "Motion" 
 )  
-  
 save(BusinessRole, file = 'data/data_raw/BusinessRole_raw.Rdata') 
 
-###
+#########################################################################
+#########################################################################
 
-MemberParty <- swissparl::get_data(   #PersonIdCode
-  table = "MemberParty",
-  Language = "DE"
-) 
-
-save(MemberParty, file = 'data/data_raw/MemberParty_raw.Rdata') 
-
-####
-
-MemberParlGroup <- swissparl::get_data(   #PersonIdCode
-  table = "MemberParlGroup",
-  Language = "DE"
-) 
-
-save(MemberParlGroup, file = 'data/data_raw/MemberParlGroup_raw.Rdata') 
-
-###
-
-ParlGroup <- swissparl::get_data(
-  table="ParlGroup",
-  Language = "DE"
-)
-
-save(MemberParty, file = 'data/data_raw/ParlGroup_raw.Rdata') 
-
-###
-
-Rapporteur <-  swissparl::get_data(
-  table="Rapporteur",
-  Language = "DE",
-)
-
-save(Rapporteur, file = 'data/data_raw/Rapporteur_raw.Rdata') 
-
-###
-
+#Get data from the table 'MemberCouncil': -> FirstName, LastName, MemberCouncilNumber
 MemberCouncil <-  swissparl::get_data(
   table="MemberCouncil",
   Language = "DE",
 )
-
 save(MemberCouncil, file = 'data/data_raw/MemberCouncil_raw.Rdata') 
+
+#########################################################################
+
+#Get data from the table 'Rapporteur': -> XXX
+Rapporteur <-  swissparl::get_data(
+  table="Rapporteur",
+  Language = "DE",
+)
+save(Rapporteur, file = 'data/data_raw/Rapporteur_raw.Rdata') 
+
+#########################################################################
+#########################################################################
+
+##Get data from the table 'MemberParty': -> Additional data that was not used
+# MemberParty <- swissparl::get_data(   
+#   table = "MemberParty",
+#   Language = "DE"
+# ) 
+# save(MemberParty, file = 'data/data_raw/MemberParty_raw.Rdata') 
+
+#########################################################################
+
+##Get data from the table 'MemberParlGroup': -> Additional data that was not used
+# MemberParlGroup <- swissparl::get_data(   
+#   table = "MemberParlGroup",
+#   Language = "DE"
+# ) 
+# save(MemberParlGroup, file = 'data/data_raw/MemberParlGroup_raw.Rdata') 
+
+#########################################################################
+
+##Get data from the table 'ParlGroup': -> Additional data that was not used
+# ParlGroup <- swissparl::get_data(
+#   table="ParlGroup",
+#   Language = "DE"
+# )
+# save(MemberParty, file = 'data/data_raw/ParlGroup_raw.Rdata') 
+
+#########################################################################
+#########################################################################
