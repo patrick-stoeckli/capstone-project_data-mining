@@ -215,3 +215,79 @@ for (i in 701:nrow(speeches_SR_final_2)){
 
 save(speeches_SR_final_2, file = 'data/data_processed/speeches_SR_final_2.Rdata')
 
+###
+
+load(file = 'data/data_raw/speeches_NR_merged.Rdata')
+
+assign("speeches_NR_final_bias", speeches_NR_merged)
+
+# Set your OpenAI API key
+api_key <- readLines("credentials/openAI_api-key.txt", n = 1, warn = FALSE)
+
+# Define the sentiment-related prompt
+prompt <- "Analyse the following text regarding its political bias. Give me two numbers between -1 and 1. The first one should reflect if the text represents a politicially left (-1) or a polticially right (1) statement. The second one should reflect if the text represents a politicially conservative (-1) or a polticially liberal (1) statement. Please round the numbers to one decimal place first. Then only print the two numbers separated by a comma without any additional explanation.  It is very important that you only print the numbers. I do not want any sort of explanation at all. This is the text:"
+speeches_NR_final_bias$bias <- rep(0, nrow(speeches_NR_final_bias))
+
+# Call the OpenAI API to generate output text based on the combined text
+for (i in 1:nrow(speeches_NR_final_bias)){
+  input_text <- speeches_NR_final_bias$SpeakerText[i]            # Define the input text for sentiment analysis
+  combined_text <- paste(prompt, input_text)        # Combine the prompt and input text
+  response <- httr::POST(
+    url = "https://api.openai.com/v1/chat/completions",
+    httr::add_headers(Authorization = paste("Bearer", api_key)),
+    content_type_json(),
+    encode = "json",
+    body = list(
+      model = "gpt-3.5-turbo",
+      messages = list(list(
+        role = "user",
+        content = combined_text
+      ))
+    )
+  )
+  parsed_response <- fromJSON(httr::content(response, as = "text"))
+  ifelse(length(parsed_response$choices[[1]]$message$content)==0,speeches_NR_final_bias$bias[i] <- "Error",speeches_NR_final_bias$bias[i] <- parsed_response$choices[[1]]$message$content)
+  #speeches_NR_final_bias$bias[i] <- parsed_response$choices[[1]]$message$content
+  print(i)
+  Sys.sleep(20)
+}
+
+save(speeches_NR_final_bias, file = 'data/data_processed/speeches_NR_final_bias.Rdata')
+
+###
+
+load(file = 'data/data_raw/speeches_SR_merged.Rdata')
+
+assign("speeches_SR_final_bias", speeches_SR_merged)
+
+# Set your OpenAI API key
+api_key <- readLines("credentials/openAI_api-key.txt", n = 1, warn = FALSE)
+
+# Define the sentiment-related prompt
+prompt <- "Analyse the following text regarding its political bias. Give me two numbers between -1 and 1. The first one should reflect if the text represents a politicially left (-1) or a polticially right (1) statement. The second one should reflect if the text represents a politicially conservative (-1) or a polticially liberal (1) statement. Please round the numbers to one decimal place first. Then only print the two numbers separated by a comma without any additional explanation.  It is very important that you only print the numbers. I do not want any sort of explanation at all. This is the text:"
+speeches_SR_final_bias$bias <- rep(0, nrow(speeches_SR_final_bias))
+
+# Call the OpenAI API to generate output text based on the combined text
+for (i in 11:20){
+  input_text <- speeches_SR_final_bias$SpeakerText[i]            # Define the input text for sentiment analysis
+  combined_text <- paste(prompt, input_text)        # Combine the prompt and input text
+  response <- httr::POST(
+    url = "https://api.openai.com/v1/chat/completions",
+    httr::add_headers(Authorization = paste("Bearer", api_key)),
+    content_type_json(),
+    encode = "json",
+    body = list(
+      model = "gpt-3.5-turbo",
+      messages = list(list(
+        role = "user",
+        content = combined_text
+      ))
+    )
+  )
+  parsed_response <- fromJSON(httr::content(response, as = "text"))
+  speeches_SR_final_bias$bias[i] <- parsed_response$choices[[1]]$message$content
+  print(i)
+  Sys.sleep(20)
+}
+
+save(speeches_SR_final_bias, file = 'data/data_processed/speeches_SR_final_bias.Rdata')
