@@ -1,121 +1,236 @@
-df <- data.frame(matrix(ncol = 3, nrow = 500))
-colnames(df) <- c("ParteiMotion", "ParteiVotum", "Wert")
+library(tidyverse)
+Parteien <- c("Grüne","SP","GLP","BD","CVP","FDP","SVP")
 
-Parteien <- c("Grüne","SP","GLP","CVP","FDP","SVP")
+#########################################################################
+#########################################################################
 
-for (i in 1:500) {
-  df$ParteiMotion[i] <- sample(Parteien,1)
-  df$ParteiVotum[i] <- sample(Parteien,1)
-  df$Wert[i] <- runif(1, -1, 1)
-}
+######RQ1: Positive or negative - National Council###### 
 
-df2 <- data.frame(matrix(ncol = length(Parteien), nrow = length(Parteien)))
-colnames(df2) <- Parteien
-rownames(df2) <- Parteien
+load(file = 'data/data_processed/speeches_NR_rq1.Rdata')
 
-for (ParteiMotion in Parteien){
-  for (ParteiVotum in Parteien){
-  df2[ParteiVotum,ParteiMotion] <- mean(df$Wert[df$ParteiMotion==ParteiMotion&df$ParteiVotum==ParteiVotum])
+speeches_NR_rq1 <- speeches_NR_rq1 %>% 
+  select(ParlGroupName,SpeakerParlGroupName, npvalue) %>% 
+  rename(MotionParlGroupName = ParlGroupName) %>%
+  filter(is.na(MotionParlGroupName) == FALSE) %>%   
+  mutate(MotionParlGroupName = ifelse(MotionParlGroupName == "Die Mitte-Fraktion. Die Mitte. EVP.", "CVP", 
+                                      ifelse(MotionParlGroupName == "Grünliberale Fraktion", "GLP", 
+                                             ifelse(MotionParlGroupName == "Grüne Fraktion", "Grüne",      
+                                                    ifelse(MotionParlGroupName == "Fraktion der Schweizerischen Volkspartei", "SVP",
+                                                           ifelse(MotionParlGroupName == "FDP-Liberale Fraktion", "FDP",
+                                                                  ifelse(MotionParlGroupName == "Sozialdemokratische Fraktion", "SP",
+                                                                         ifelse(MotionParlGroupName == "Fraktion BD", "BD",
+                                                                                MotionParlGroupName)))))))
+  ) %>% 
+  mutate(SpeakerParlGroupName = ifelse(SpeakerParlGroupName == "CVP-Fraktion", "CVP", 
+                                       ifelse(SpeakerParlGroupName == "Grünliberale Fraktion", "GLP", 
+                                              ifelse(SpeakerParlGroupName == "Grüne Fraktion", "Grüne",      
+                                                     ifelse(SpeakerParlGroupName == "Fraktion der Schweizerischen Volkspartei", "SVP",
+                                                            ifelse(SpeakerParlGroupName == "FDP-Liberale Fraktion", "FDP",
+                                                                   ifelse(SpeakerParlGroupName == "Sozialdemokratische Fraktion", "SP",
+                                                                          ifelse(SpeakerParlGroupName == "Fraktion BD", "BD",
+                                                                                 SpeakerParlGroupName)))))))
+  ) 
+
+speeches_NR_rq1_2 <- data.frame(matrix(ncol = length(Parteien), nrow = length(Parteien)))
+colnames(speeches_NR_rq1_2) <- Parteien
+rownames(speeches_NR_rq1_2) <- Parteien
+
+for (MotionParlGroupName in Parteien){
+  for (SpeakerParlGroupName in Parteien){
+    speeches_NR_rq1_2[SpeakerParlGroupName,MotionParlGroupName] <- mean(speeches_NR_rq1$npvalue[speeches_NR_rq1$MotionParlGroupName==MotionParlGroupName&speeches_NR_rq1$SpeakerParlGroupName==SpeakerParlGroupName])
   }
 }
 
-df3 <- df2 %>%
+speeches_NR_rq1_3 <- speeches_NR_rq1_2 %>%
   rownames_to_column() %>%
   gather(colname, value, -rowname) %>%
-  rename(ParteiMotion = colname) %>%
-  rename(ParteiVotum = rowname) %>%
-  rename(Wert = value) 
+  rename(MotionParlGroupName = colname) %>%
+  rename(SpeakerParlGroupName = rowname) %>%
+  rename(npvalue = value) 
 
-# sort the data set by color in the defined order, then by fruit in the defined order
-data_sorted <- df3 %>%
-  mutate(ParteiMotion = factor(ParteiMotion, levels = Parteien),
-         ParteiVotum = factor(ParteiVotum, levels = Parteien)) %>%
-  arrange(ParteiVotum, ParteiMotion)
+speeches_NR_rq1_3_sorted <- speeches_NR_rq1_3 %>%
+  mutate(MotionParlGroupName = factor(MotionParlGroupName, levels = Parteien),
+         SpeakerParlGroupName = factor(SpeakerParlGroupName, levels = rev(Parteien))) %>%
+  arrange(SpeakerParlGroupName, MotionParlGroupName)
 
-# print the sorted data set
-print(data_sorted)
+speeches_NR_rq1_plot <- ggplot(speeches_NR_rq1_3_sorted, aes(x = MotionParlGroupName, y = SpeakerParlGroupName, fill = npvalue)) +
+  geom_tile() +
+  scale_fill_gradient2(low = "red", mid = "white", high = "green", midpoint = 0, limits = c(-1, 1)) +
+  labs(title = "A Heatmap of Parlamentarian Speeches", subtitle = "(National Council, n=1615)") +
+  theme(plot.title = element_text(hjust = 0.5, face="bold"),
+        plot.subtitle = element_text(hjust = 0.5)) +
+  theme(legend.title = element_blank()) +
+  xlab("parliamentary group of the initiator") +
+  ylab("parliamentary group of the speaker")
 
-ggplot(data_sorted, aes(x = ParteiMotion, y = ParteiVotum, fill = Wert)) +
-  geom_tile()
+ggsave('output/plots/speeches_NR_rq1.png', speeches_NR_rq1_plot, width = 10, height = 8)
 
-# add another plot example plot for the bias analysis
+#########################################################################
 
+######RQ1: Positive or negative - Council of States ###### 
 
-for (i in 1:500) {
-  df$LeftRightValue[i] <- runif(1, -1, 1)
-  df$ConservativeLiberalValue[i] <- runif(1, -1, 1)
+load(file = 'data/data_processed/speeches_SR_rq1.Rdata')
+
+speeches_SR_rq1 <- speeches_SR_rq1 %>% 
+  select(ParlGroupName,SpeakerParlGroupName, npvalue) %>% 
+  rename(MotionParlGroupName = ParlGroupName) %>%
+  filter(is.na(MotionParlGroupName) == FALSE) %>%   
+  mutate(MotionParlGroupName = ifelse(MotionParlGroupName == "Die Mitte-Fraktion. Die Mitte. EVP.", "CVP", 
+                                      ifelse(MotionParlGroupName == "Grünliberale Fraktion", "GLP", 
+                                             ifelse(MotionParlGroupName == "Grüne Fraktion", "Grüne",      
+                                                    ifelse(MotionParlGroupName == "Fraktion der Schweizerischen Volkspartei", "SVP",
+                                                           ifelse(MotionParlGroupName == "FDP-Liberale Fraktion", "FDP",
+                                                                  ifelse(MotionParlGroupName == "Sozialdemokratische Fraktion", "SP",
+                                                                         ifelse(MotionParlGroupName == "Fraktion BD", "BD",
+                                                                                MotionParlGroupName)))))))
+  ) %>% 
+  mutate(SpeakerParlGroupName = ifelse(SpeakerParlGroupName == "CVP-Fraktion", "CVP", 
+                                       ifelse(SpeakerParlGroupName == "Grünliberale Fraktion", "GLP", 
+                                              ifelse(SpeakerParlGroupName == "Grüne Fraktion", "Grüne",      
+                                                     ifelse(SpeakerParlGroupName == "Fraktion der Schweizerischen Volkspartei", "SVP",
+                                                            ifelse(SpeakerParlGroupName == "FDP-Liberale Fraktion", "FDP",
+                                                                   ifelse(SpeakerParlGroupName == "Sozialdemokratische Fraktion", "SP",
+                                                                          ifelse(SpeakerParlGroupName == "Fraktion BD", "BD",
+                                                                                 SpeakerParlGroupName)))))))
+  ) 
+
+speeches_SR_rq1_2 <- data.frame(matrix(ncol = length(Parteien), nrow = length(Parteien)))
+colnames(speeches_SR_rq1_2) <- Parteien
+rownames(speeches_SR_rq1_2) <- Parteien
+
+for (MotionParlGroupName in Parteien){
+  for (SpeakerParlGroupName in Parteien){
+    speeches_SR_rq1_2[SpeakerParlGroupName,MotionParlGroupName] <- mean(speeches_SR_rq1$npvalue[speeches_SR_rq1$MotionParlGroupName==MotionParlGroupName&speeches_SR_rq1$SpeakerParlGroupName==SpeakerParlGroupName])
+  }
 }
 
-df <- df %>%
-  mutate(ParteiVotum = factor(ParteiVotum, levels = Parteien)) %>%
-  arrange(ParteiVotum)
+speeches_SR_rq1_3 <- speeches_SR_rq1_2 %>%
+  rownames_to_column() %>%
+  gather(colname, value, -rowname) %>%
+  rename(MotionParlGroupName = colname) %>%
+  rename(SpeakerParlGroupName = rowname) %>%
+  rename(npvalue = value) 
 
-ggplot(df, aes(LeftRightValue, ConservativeLiberalValue, colour = ParteiVotum)) + 
+speeches_SR_rq1_3_sorted <- speeches_SR_rq1_3 %>%
+  mutate(MotionParlGroupName = factor(MotionParlGroupName, levels = Parteien),
+         SpeakerParlGroupName = factor(SpeakerParlGroupName, levels = rev(Parteien))) %>%
+  arrange(SpeakerParlGroupName, MotionParlGroupName)
+
+speeches_SR_rq1_plot <- ggplot(speeches_SR_rq1_3_sorted, aes(x = MotionParlGroupName, y = SpeakerParlGroupName, fill = npvalue)) +
+  geom_tile() +
+  scale_fill_gradient2(low = "red", mid = "white", high = "green", midpoint = 0, limits = c(-1, 1)) +
+  labs(title = "A Heatmap of Parlamentarian Speeches", subtitle = "(Council of States, n=1252)") +
+  theme(plot.title = element_text(hjust = 0.5, face="bold"),
+        plot.subtitle = element_text(hjust = 0.5)) +
+  theme(legend.title = element_blank()) +
+  xlab("parliamentary group of the initiator") +
+  ylab("parliamentary group of the speaker")
+
+ggsave('output/plots/speeches_SR_rq1.png', speeches_SR_rq1_plot, width = 10, height = 8)
+
+#########################################################################
+#########################################################################
+
+######RQ2: Left or right and conservative or liberal - National Council###### 
+
+load(file = 'data/data_processed/speeches_NR_rq2.Rdata')
+
+speeches_NR_rq2 <- speeches_NR_rq2 %>% 
+  select(ParlGroupName,SpeakerParlGroupName, lrvalue, clvalue) %>% 
+  rename(MotionParlGroupName = ParlGroupName) %>%
+  filter(is.na(MotionParlGroupName) == FALSE) %>%   
+  mutate(MotionParlGroupName = ifelse(MotionParlGroupName == "Die Mitte-Fraktion. Die Mitte. EVP.", "CVP", 
+                                      ifelse(MotionParlGroupName == "Grünliberale Fraktion", "GLP", 
+                                             ifelse(MotionParlGroupName == "Grüne Fraktion", "Grüne",      
+                                                    ifelse(MotionParlGroupName == "Fraktion der Schweizerischen Volkspartei", "SVP",
+                                                           ifelse(MotionParlGroupName == "FDP-Liberale Fraktion", "FDP",
+                                                                  ifelse(MotionParlGroupName == "Sozialdemokratische Fraktion", "SP",
+                                                                         ifelse(MotionParlGroupName == "Fraktion BD", "BD",
+                                                                                MotionParlGroupName)))))))
+  ) %>% 
+  mutate(SpeakerParlGroupName = ifelse(SpeakerParlGroupName == "CVP-Fraktion", "CVP", 
+                                       ifelse(SpeakerParlGroupName == "Grünliberale Fraktion", "GLP", 
+                                              ifelse(SpeakerParlGroupName == "Grüne Fraktion", "Grüne",      
+                                                     ifelse(SpeakerParlGroupName == "Fraktion der Schweizerischen Volkspartei", "SVP",
+                                                            ifelse(SpeakerParlGroupName == "FDP-Liberale Fraktion", "FDP",
+                                                                   ifelse(SpeakerParlGroupName == "Sozialdemokratische Fraktion", "SP",
+                                                                          ifelse(SpeakerParlGroupName == "Fraktion BD", "BD",
+                                                                                 SpeakerParlGroupName)))))))
+  ) 
+
+speeches_NR_rq2_sorted <- speeches_NR_rq2 %>%
+  mutate(SpeakerParlGroupName = factor(SpeakerParlGroupName, levels = Parteien)) %>%
+  arrange(SpeakerParlGroupName)
+
+speeches_NR_rq2_plot <- ggplot(speeches_NR_rq2_sorted, aes(lrvalue, clvalue, colour = SpeakerParlGroupName)) + 
+  geom_point(position = position_jitter(width = 0.1, height = 0)) +
   geom_vline(xintercept=0) +
   geom_hline(yintercept=0) +
-  labs(title = "A political map of parlamentarian speeches", subtitle = "liberal") +
+  labs(title = "A political Map of Parlamentarian Speeches (National Council, n=1615)", subtitle = "liberal", x = "conservative") +
   theme(plot.title = element_text(hjust = 0.5, face="bold"),
         plot.subtitle = element_text(hjust = 0.5),
+        axis.title.x = element_text(hjust = 0.5),
         axis.text.x=element_blank(), #remove x axis labels
         axis.ticks.x=element_blank(), #remove x axis ticks
         axis.text.y=element_blank(),  #remove y axis labels
-        axis.ticks.y=element_blank()  #remove y axis ticks
-        ) +
-  xlab("conservative") +
+        axis.ticks.y=element_blank(),  #remove y axis ticks
+        legend.title = element_blank()
+  ) +
   scale_y_continuous(name = "left",sec.axis = sec_axis( trans=~.*1, name="right")) +
-  #ylab("left") +
-  scale_color_manual(values = c("green", "red", "lightgreen", "orange", "blue","darkgreen")) +
-  geom_point()
+  scale_x_continuous(limits = c(-1, 1)) +
+  scale_color_manual(values = c("green", "red", "lightgreen", "yellow" ,"orange", "blue","darkgreen")) 
 
-#load(file = 'data/data_raw/first_try.Rdata')
-load(file = 'data/data_processed/speeches_NR_final.Rdata')
+ggsave('output/plots/speeches_NR_rq2.png', speeches_NR_rq2_plot, width = 10, height = 8)
 
-Parteien <- c("Grüne","SP","GLP","BD","CVP","FDP","SVP")
+#########################################################################
 
-speeches_NR_final <- speeches_NR_final[1:1200,] 
+######RQ2: Positive or negative - Council of States ###### 
 
-speeches_NR_final <- speeches_NR_final %>% 
-  #mutate(value = as.numeric(value)) %>% 
-  mutate(value = str_replace_all(value, "[^0-9.-]", ""),
-         value = as.numeric(value)) %>%
-  select(ParlGroupName,SpeakerParlGroupName, value) %>% 
-  filter(is.na(ParlGroupName) == FALSE) %>%   
-  mutate(ParlGroupName = ifelse(ParlGroupName == "Die Mitte-Fraktion. Die Mitte. EVP.", "CVP", 
-                          ifelse(ParlGroupName == "Grünliberale Fraktion", "GLP", 
-                            ifelse(ParlGroupName == "Grüne Fraktion", "Grüne",      
-                              ifelse(ParlGroupName == "Fraktion der Schweizerischen Volkspartei", "SVP",
-                                ifelse(ParlGroupName == "FDP-Liberale Fraktion", "FDP",
-                                  ifelse(ParlGroupName == "Sozialdemokratische Fraktion", "SP",
-                                    ifelse(ParlGroupName == "Fraktion BD", "BD",
-                                      ParlGroupName)))))))
-         ) %>% 
+load(file = 'data/data_processed/speeches_SR_rq2.Rdata')
+
+speeches_SR_rq2 <- speeches_SR_rq2 %>% 
+  select(ParlGroupName,SpeakerParlGroupName, lrvalue, clvalue) %>% 
+  rename(MotionParlGroupName = ParlGroupName) %>%
+  filter(is.na(MotionParlGroupName) == FALSE) %>%   
+  mutate(MotionParlGroupName = ifelse(MotionParlGroupName == "Die Mitte-Fraktion. Die Mitte. EVP.", "CVP", 
+                                      ifelse(MotionParlGroupName == "Grünliberale Fraktion", "GLP", 
+                                             ifelse(MotionParlGroupName == "Grüne Fraktion", "Grüne",      
+                                                    ifelse(MotionParlGroupName == "Fraktion der Schweizerischen Volkspartei", "SVP",
+                                                           ifelse(MotionParlGroupName == "FDP-Liberale Fraktion", "FDP",
+                                                                  ifelse(MotionParlGroupName == "Sozialdemokratische Fraktion", "SP",
+                                                                         ifelse(MotionParlGroupName == "Fraktion BD", "BD",
+                                                                                MotionParlGroupName)))))))
+  ) %>% 
   mutate(SpeakerParlGroupName = ifelse(SpeakerParlGroupName == "CVP-Fraktion", "CVP", 
-                                  ifelse(SpeakerParlGroupName == "Grünliberale Fraktion", "GLP", 
-                                    ifelse(SpeakerParlGroupName == "Grüne Fraktion", "Grüne",      
-                                      ifelse(SpeakerParlGroupName == "Fraktion der Schweizerischen Volkspartei", "SVP",
-                                        ifelse(SpeakerParlGroupName == "FDP-Liberale Fraktion", "FDP",
-                                          ifelse(SpeakerParlGroupName == "Sozialdemokratische Fraktion", "SP",
-                                            ifelse(SpeakerParlGroupName == "Fraktion BD", "BD",
-                                              SpeakerParlGroupName)))))))
-         ) %>%
-  mutate(ParlGroupName = factor(ParlGroupName, levels = Parteien),
-         SpeakerParlGroupName = factor(SpeakerParlGroupName, levels = Parteien)) %>%
-  arrange(ParlGroupName, SpeakerParlGroupName)
+                                       ifelse(SpeakerParlGroupName == "Grünliberale Fraktion", "GLP", 
+                                              ifelse(SpeakerParlGroupName == "Grüne Fraktion", "Grüne",      
+                                                     ifelse(SpeakerParlGroupName == "Fraktion der Schweizerischen Volkspartei", "SVP",
+                                                            ifelse(SpeakerParlGroupName == "FDP-Liberale Fraktion", "FDP",
+                                                                   ifelse(SpeakerParlGroupName == "Sozialdemokratische Fraktion", "SP",
+                                                                          ifelse(SpeakerParlGroupName == "Fraktion BD", "BD",
+                                                                                 SpeakerParlGroupName)))))))
+  ) 
 
-df2 <- data.frame(matrix(ncol = length(Parteien), nrow = length(Parteien)))
-colnames(df2) <- Parteien
-rownames(df2) <- Parteien
+speeches_SR_rq2_sorted <- speeches_SR_rq2 %>%
+  mutate(SpeakerParlGroupName = factor(SpeakerParlGroupName, levels = Parteien)) %>%
+  arrange(SpeakerParlGroupName)
 
-for (ParlGroupName in Parteien){
-  for (SpeakerParlGroupName in Parteien){
-    df2[SpeakerParlGroupName,ParlGroupName] <- mean(speeches_NR_final$value[speeches_NR_final$ParlGroupName==ParlGroupName&speeches_NR_final$SpeakerParlGroupName==SpeakerParlGroupName])
-  }
-}
+speeches_SR_rq2_plot <- ggplot(speeches_SR_rq2_sorted, aes(lrvalue, clvalue, colour = SpeakerParlGroupName)) + 
+  geom_point(position = position_jitter(width = 0.1, height = 0)) +
+  geom_vline(xintercept=0) +
+  geom_hline(yintercept=0) +
+  labs(title = "A political Map of Parlamentarian Speeches (Council of States, n=1252)", subtitle = "liberal", x = "conservative") +
+  theme(plot.title = element_text(hjust = 0.5, face="bold"),
+        plot.subtitle = element_text(hjust = 0.5),
+        axis.title.x = element_text(hjust = 0.5),
+        axis.text.x=element_blank(), #remove x axis labels
+        axis.ticks.x=element_blank(), #remove x axis ticks
+        axis.text.y=element_blank(),  #remove y axis labels
+        axis.ticks.y=element_blank(),  #remove y axis ticks
+        legend.title = element_blank()
+  ) +
+  scale_y_continuous(name = "left",sec.axis = sec_axis( trans=~.*1, name="right")) +
+  scale_x_continuous(limits = c(-1, 1)) +
+  scale_color_manual(values = c("green", "red", "yellow" ,"orange", "blue","darkgreen"))  
 
-
-
-
-ggplot(speeches_NR_final, aes(x = ParlGroupName, y = SpeakerParlGroupName, fill = value)) +
-  geom_tile() +
-  scale_fill_gradient2(low = "red", mid = "white", high = "green", midpoint = 0, limits = c(-1, 1))
-
+ggsave('output/plots/speeches_SR_rq2.png', speeches_SR_rq2_plot, width = 10, height = 8)
