@@ -1,7 +1,7 @@
 #Load package 'tidyverse'
 library(tidyverse)
 
-#Load datasets from created in .r_file '00_download_data'
+#Load datasets created in .r_file '00_download_data'
 load('data/data_raw/BusinessResponsibility_raw.Rdata')
 load('data/data_raw/SubjectBusiness_raw.Rdata')
 load('data/data_raw/BusinessRole_raw.Rdata') 
@@ -45,5 +45,5 @@ Rapporteur <- Rapporteur %>%
 df2 <- merge(Rapporteur, MemberCouncil, by = c("FirstName", "LastName"), all.x = TRUE)
 
 #Merge all datasets and save the file
-Basic_data <- merge(df1, df2, by = "MemberCouncilNumber", all.x = TRUE)
-save(Basic_data, file = 'data/data_raw/Basic_data.Rdata') 
+basic_data <- merge(df1, df2, by = "MemberCouncilNumber", all.x = TRUE)
+save(basic_data, file = 'data/data_raw/basic_data.Rdata') 
