@@ -18,32 +18,79 @@ knitr::opts_chunk$set(echo = FALSE, warning = FALSE, message = FALSE)
 
 ## Introduction
 
-TBD.
+In this capstone project we were asked to develop an innovative and ambitious data mining project working with a reproducible workflow using RStudio projects and GitHub. Furthermore, working autonomously was expected.
+
+In consultation with the lecturer I decided to conduct a sentiment analysis of Swiss parliamentarian speeches using ChatGPT.
+
+Third, review how the activities 
+actually unfolded and the difficulties that were encountered during the project. Four, present how the 
+contribution/application worked out in practice, showing what has been achieved and what could not 
+be achieved (in the latter case, identify the causes of the impossibility to achieve a feature). A final section 
+may briefly conclude.
 
 ### Research Question
 
-TBD.
+The project aims to analyse a limited number of Swiss parliamentarian speeches from the 50th legislation (30.11.2015 - 01.12.2019) and to visualize the results appealingly. The core of the project is a sentiment analysis using ChatGPT from OpenAI. The main questions are:
 
-**TBD.?**
+**How positive / negative do politicians from certain parties speak about the motions of politicians from the own or other parties?**
+**How left or right and conservative or liberal are the speeches in the statements about the motions and does it depend on the political party the politicians belong to?**
+**How complex and formal is the use of language of politicians in their statements to their own and others motions?**
 
-### Hypothesis
+### Hypotheses
 
-TBD.
+From basic political considerations one would expect that politicians from different parties do not agree by large about political goals and/or tools. Hence, the following hypotheses can be made:
+
+- While politicians from the same party are likely to speak positive about their colleagues motions, politicians from different parties are much more likely to speak negatively about the motions of other politicians, especially if there is a large gap between their political opinions (e.g. left parties versus right parties).
+
+- Politicians speak in accordance to their political opinions.
+
+- However, such differences might also be influenced by the political system. For example, a politician in the National Council might not behave in the same way as a politician in the Council of States.
+
+- If politicians select themselves into parties based on their social background or if party-membership fosters certain behavior, politicians might speak unequally complex and/or formal.
 
 ## Methods
 
-TBD.
+The tasks for this project can be split into five steps.
+
+1) Scrape or retrieve data.
+2) Clean and sort data.
+3) Run a sentiment analysis.
+4) Plot the results.
+5) Summarize the project in a report.
+
+Regarding the first point, I was happy that scraping from the Swiss parliamentarian website (https://www.parlament.ch/en) itself was not necessary, as I could retrieve the data with the package 'swissparl' (https://github.com/zumbov2/swissparl). This R package is an interface to the new, still unofficial and accordingly still undocumented webservices of The Federal Assembly — The Swiss Parliament that offer an open, machine-readable interface to the most important data on parliamentary activities. However, the almost non-existing documentation turned out to be a challenge, as several variables from different tables needed to be downloaded and merged. The technical part was though not a great challenge, but to find out which variable in which table matches with each other was sort of a greater deal, especially for the basic data which was an important input for the call to download the speeches as well as contains further information that was essential for the analysis I wanted to do.
+
+Another challenge was the formulation of the message which was sent to ChatGPT. Especially if one demands ChatGPT to deliver a number, it turns out that it can't always handle such requests and nevertheless delivers further information generating additional data cleaning effort. A trial-and-error method was the best way to handle this challenge, and in the end the following messages were sent to ChatGPT.
+
+**RQ1: What is the sentiment of the following text using a number between -1 and 1? -1 is very negative, 1 is very positive. Please only print the number itself:**
+
+**RQ2: Analyse the following text regarding its political bias. Give me two numbers between -1 and 1. The first one should reflect if the text represents a politicially left (-1) or a polticially right (1) statement. The second one should reflect if the text represents a politicially conservative (-1) or a polticially liberal (1) statement. Please round the numbers to one decimal place first. Then only print the two numbers separated by a comma without any additional explanation.  It is very important that you only print the numbers. I do not want any sort of explanation at all. This is the text:**
+
+**RQ3: Analyze the following text regarding its complexity and formality. Give me for both factors a number between 0 and 10. The first number should reflect if the text is complex, the second number should reflect if the text is formal. Print only the two integer numbers separated by a comma without any additional explanation or other words. It is very important that you only print the numbers separated by a comma. I do not want any sort of explanation at all. This is the text:**
 
 ## Results
 
-TBD.
+The following plots visualize the results. While this part only contents the latter ones, the next part discusses them.
 
-TBD. 
+```{r, fig.show='hold',out.width='50%', fig.cap='Research question 1'}
 
-TBD. 
+knitr::include_graphics("../output/plots/speeches_NR_rq1.png")
+knitr::include_graphics("../output/plots/speeches_SR_rq1.png")
+
+```
+
+
+```{r, fig.show='hold',out.width='50%', fig.cap='Research question 2'}
+
+knitr::include_graphics("../output/plots/speeches_NR_rq2.png")
+knitr::include_graphics("../output/plots/speeches_SR_rq2.png")
+
+``` 
 
 ## Discussion 
 
 TBD. 
 
 ## Conclusion
+
+TBD. 
