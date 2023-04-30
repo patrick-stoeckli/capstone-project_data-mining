@@ -6,7 +6,7 @@ This GitHub repository contains a capstone-project that was written for the cour
 
 ## Content
 
-The core of the project is a sentiment analysis using ChatGPT from OpenAI. The main questions were:
+The core of the project is a sentiment analysis using ChatGPT from OpenAI. The main questions are:
 - How positive / negative do politicians from certain parties speak about the motions of politicians from the own or other parties?
 - How left or right and conservative or liberal are the speeches in the statements about the motions?
 
