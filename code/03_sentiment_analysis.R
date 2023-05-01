@@ -231,7 +231,7 @@ prompt <- "Analyse the following text regarding its political bias. Give me two 
 speeches_SR_rq2$lrclvalue <- rep(0, nrow(speeches_SR_rq2))
 
 # Call the OpenAI API to generate output text based on the combined text
-for (i in 11:20){
+for (i in 1:nrow(speeches_SR_rq2)){
   input_text <- speeches_SR_rq2$SpeakerText[i]            # Define the input text for sentiment analysis
   combined_text <- paste(prompt, input_text)        # Combine the prompt and input text
   response <- httr::POST(
@@ -269,6 +269,7 @@ speeches_SR_rq2$clvalue[376] <- 0.6
 speeches_SR_rq2$clvalue[694] <- 0.0
 
 # 311 and 700 are too long
+speeches_SR_rq2 <- speeches_SR_rq2[-c(376,694),]
 
 save(speeches_SR_rq2, file = 'data/data_processed/speeches_SR_rq2.Rdata')
 
@@ -277,7 +278,7 @@ save(speeches_SR_rq2, file = 'data/data_processed/speeches_SR_rq2.Rdata')
 
 ######RQ3: Complexity and formality - National Council###### 
 
-load(file = 'data/data_raw/speeches_NR.Rdata')
+load(file = 'data/data_processed/speeches_NR.Rdata')
 
 assign("speeches_NR_rq3", speeches_NR)
 
@@ -311,13 +312,45 @@ for (i in 311:nrow(speeches_NR_rq3)){
   Sys.sleep(20)
 }
 
+for (i in 1:nrow(speeches_NR_rq3)){
+  speeches_NR_rq3$fvalue[i] <- substr(speeches_NR_rq3$cfvalue[i], nchar(speeches_NR_rq3$cfvalue[i]), nchar(speeches_NR_rq3$cfvalue[i]))
+  speeches_NR_rq3$cvalue[i] <- (as.numeric(substr(speeches_NR_rq3$cfvalue[i], nchar(1), nchar(1))))
+}
+
+na_indices <- which(is.na(speeches_NR_rq3$cvalue))
+
+for (i in na_indices){
+  value <- sub(".*Complexity: ([0-9]+).*", "\\1", speeches_NR_rq3$cfvalue[i])
+  numeric_value <- as.numeric(value)
+  speeches_NR_rq3$cvalue[i] <- value
+}  
+
+speeches_NR_rq3 <- speeches_NR_rq3 %>% 
+  mutate(cvalue = as.numeric(cvalue)) %>%
+  mutate(fvalue = as.numeric(fvalue)) 
+
+missing_obs <- speeches_NR_rq3[is.na(speeches_NR_rq3$cvalue), ]
+missing_obs
+
+speeches_NR_rq3$cvalue[39] <- 5
+speeches_NR_rq3$cvalue[365] <- 7
+
+missing_obs2 <- speeches_NR_rq3[is.na(speeches_NR_rq3$fvalue), ]
+missing_obs2
+
+speeches_NR_rq3$fvalue[39] <- 8
+speeches_NR_rq3$fvalue[267] <- 8 
+speeches_NR_rq3$fvalue[335] <- 8 
+speeches_NR_rq3$fvalue[365] <- 9
+speeches_NR_rq3$fvalue[771] <- 7 
+
 save(speeches_NR_rq3, file = 'data/data_processed/speeches_NR_rq3.Rdata')
 
 #########################################################################
 
 ######RQ3: Complexity and formality - Council of States ###### 
 
-load(file = 'data/data_raw/speeches_SR.Rdata')
+load(file = 'data/data_processed/speeches_SR.Rdata')
 
 assign("speeches_SR_rq3", speeches_SR)
 
@@ -346,9 +379,45 @@ for (i in 311:nrow(speeches_SR_rq3)){
     )
   )
   parsed_response <- fromJSON(httr::content(response, as = "text"))
-  speeches_SR_rq3$cfvalue[i] <- parsed_response$choices[[1]]$message$content
+  ifelse(length(parsed_response$choices[[1]]$message$content)==0,speeches_SR_rq3$cfvalue[i] <- "Error",speeches_SR_rq3$cfvalue[i] <- parsed_response$choices[[1]]$message$content)
+  #speeches_SR_rq3$cfvalue[i] <- parsed_response$choices[[1]]$message$content
   print(i)
   Sys.sleep(20)
 }
+
+for (i in 1:nrow(speeches_SR_rq3)){
+  speeches_SR_rq3$fvalue[i] <- substr(speeches_SR_rq3$cfvalue[i], nchar(speeches_SR_rq3$cfvalue[i]), nchar(speeches_SR_rq3$cfvalue[i]))
+  speeches_SR_rq3$cvalue[i] <- (as.numeric(substr(speeches_SR_rq3$cfvalue[i], nchar(1), nchar(1))))
+}
+
+na_indices <- which(is.na(speeches_SR_rq3$cvalue))
+
+for (i in na_indices){
+  value <- sub(".*Complexity: ([0-9]+).*", "\\1", speeches_SR_rq3$cfvalue[i])
+  numeric_value <- as.numeric(value)
+  speeches_SR_rq3$cvalue[i] <- value
+}  
+
+speeches_SR_rq3 <- speeches_SR_rq3 %>% 
+  mutate(cvalue = as.numeric(cvalue)) %>%
+  mutate(fvalue = as.numeric(fvalue)) 
+
+missing_obs <- speeches_SR_rq3[is.na(speeches_SR_rq3$cvalue), ]
+missing_obs
+
+speeches_SR_rq3$cvalue[844] <- 5
+speeches_SR_rq3$cvalue[594] <- 5
+speeches_SR_rq3$cvalue[1145] <- 3 
+
+missing_obs2 <- speeches_SR_rq3[is.na(speeches_SR_rq3$fvalue), ]
+missing_obs2
+
+speeches_SR_rq3$fvalue[844] <- 8
+speeches_SR_rq3$fvalue[905] <- 9
+speeches_SR_rq3$fvalue[1052] <- 7 
+speeches_SR_rq3$fvalue[1086] <- 8 
+speeches_SR_rq3$fvalue[1145] <- 8 
+
+speeches_SR_rq3 <- speeches_SR_rq3[-c(311,700),]
 
 save(speeches_SR_rq3, file = 'data/data_processed/speeches_SR_rq3.Rdata')
