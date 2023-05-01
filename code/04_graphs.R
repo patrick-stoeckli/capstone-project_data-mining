@@ -234,3 +234,96 @@ speeches_SR_rq2_plot <- ggplot(speeches_SR_rq2_sorted, aes(lrvalue, clvalue, col
   scale_color_manual(values = c("green", "red", "yellow" ,"orange", "blue","darkgreen"))  
 
 ggsave('output/plots/speeches_SR_rq2.png', speeches_SR_rq2_plot, width = 10, height = 8)
+
+#########################################################################
+#########################################################################
+
+######RQ3: Complexity and formality - National Council ######
+
+load(file = 'data/data_processed/speeches_NR_rq3.Rdata')
+
+speeches_NR_rq3 <- speeches_NR_rq3 %>% 
+  filter(is.na(ParlGroupName) == FALSE) %>%  
+  select(SpeakerParlGroupName, cvalue, fvalue) %>% 
+  mutate(SpeakerParlGroupName = ifelse(SpeakerParlGroupName == "CVP-Fraktion", "CVP", 
+                                       ifelse(SpeakerParlGroupName == "Grünliberale Fraktion", "GLP", 
+                                              ifelse(SpeakerParlGroupName == "Grüne Fraktion", "Grüne",      
+                                                     ifelse(SpeakerParlGroupName == "Fraktion der Schweizerischen Volkspartei", "SVP",
+                                                            ifelse(SpeakerParlGroupName == "FDP-Liberale Fraktion", "FDP",
+                                                                   ifelse(SpeakerParlGroupName == "Sozialdemokratische Fraktion", "SP",
+                                                                          ifelse(SpeakerParlGroupName == "Fraktion BD", "BD",
+                                                                                 SpeakerParlGroupName)))))))
+  ) 
+
+speeches_NR_rq3_2 <- aggregate(speeches_NR_rq3[,2:3], by=list(SpeakerParlGroupName=speeches_NR_rq3$SpeakerParlGroupName), mean)
+
+speeches_NR_rq3_2_long <- pivot_longer(speeches_NR_rq3_2, cols = c("cvalue", "fvalue"), names_to = "variable", values_to = "value")
+
+mat <- t(as.matrix(speeches_NR_rq3_2[, -1]))
+
+# Reshape the data
+#speeches_NR_rq3_2_long <- gather(speeches_NR_rq3_2, key = "Variable", value = "Value", -V) 
+speeches_NR_rq3_2_long <- pivot_longer(speeches_NR_rq3_2, cols = c("cvalue", "fvalue"), names_to = "variable", values_to = "value") %>%
+  mutate(SpeakerParlGroupName = factor(SpeakerParlGroupName, levels = Parteien)) %>%
+  arrange(SpeakerParlGroupName)
+
+# Plot the data
+speeches_NR_rq3_plot <-  ggplot(speeches_NR_rq3_2_long, aes(x = SpeakerParlGroupName, y = value, fill = variable)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  ylab("mean value") +
+  xlab("")+
+  scale_fill_manual(values = c("lightblue", "pink"), name = "Variable",
+                    labels = c("complexity", "formality")) +
+  labs(title = "Complexity and Formality of Parliamentarien Speeches by Party", subtitle = "(National Council, n=1615)") +
+  theme(plot.title = element_text(hjust = 0.5, face="bold"),
+        plot.subtitle = element_text(hjust = 0.5)) +
+  theme(legend.title = element_blank()) +
+  ylim(0,10)
+
+ggsave('output/plots/speeches_NR_rq3.png', speeches_NR_rq3_plot, width = 10, height = 8)
+
+#########################################################################
+
+######RQ3: Complexity and formality - Council of States ###### 
+
+load(file = 'data/data_processed/speeches_SR_rq3.Rdata')
+
+speeches_SR_rq3 <- speeches_SR_rq3 %>% 
+  filter(is.na(ParlGroupName) == FALSE) %>%  
+  select(SpeakerParlGroupName, cvalue, fvalue) %>% 
+  mutate(SpeakerParlGroupName = ifelse(SpeakerParlGroupName == "CVP-Fraktion", "CVP", 
+                                       ifelse(SpeakerParlGroupName == "Grünliberale Fraktion", "GLP", 
+                                              ifelse(SpeakerParlGroupName == "Grüne Fraktion", "Grüne",      
+                                                     ifelse(SpeakerParlGroupName == "Fraktion der Schweizerischen Volkspartei", "SVP",
+                                                            ifelse(SpeakerParlGroupName == "FDP-Liberale Fraktion", "FDP",
+                                                                   ifelse(SpeakerParlGroupName == "Sozialdemokratische Fraktion", "SP",
+                                                                          ifelse(SpeakerParlGroupName == "Fraktion BD", "BD",
+                                                                                 SpeakerParlGroupName)))))))
+  ) 
+
+speeches_SR_rq3_2 <- aggregate(speeches_SR_rq3[,2:3], by=list(SpeakerParlGroupName=speeches_SR_rq3$SpeakerParlGroupName), mean)
+
+speeches_SR_rq3_2_long <- pivot_longer(speeches_SR_rq3_2, cols = c("cvalue", "fvalue"), names_to = "variable", values_to = "value")
+
+mat <- t(as.matrix(speeches_SR_rq3_2[, -1]))
+
+# Reshape the data
+#speeches_SR_rq3_2_long <- gather(speeches_SR_rq3_2, key = "Variable", value = "Value", -V) 
+speeches_SR_rq3_2_long <- pivot_longer(speeches_SR_rq3_2, cols = c("cvalue", "fvalue"), names_to = "variable", values_to = "value") %>%
+  mutate(SpeakerParlGroupName = factor(SpeakerParlGroupName, levels = Parteien)) %>%
+  arrange(SpeakerParlGroupName)
+
+# Plot the data
+speeches_SR_rq3_plot <-  ggplot(speeches_SR_rq3_2_long, aes(x = SpeakerParlGroupName, y = value, fill = variable)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  ylab("mean value") +
+  xlab("")+
+  scale_fill_manual(values = c("lightblue", "pink"), name = "Variable",
+                    labels = c("complexity", "formality")) +
+  labs(title = "Complexity and Formality of Parliamentarien Speeches by Party", subtitle = "(Council of States, n=1250)") +
+  theme(plot.title = element_text(hjust = 0.5, face="bold"),
+        plot.subtitle = element_text(hjust = 0.5)) +
+  theme(legend.title = element_blank()) +
+  ylim(0,10)
+
+ggsave('output/plots/speeches_SR_rq3.png', speeches_SR_rq3_plot, width = 10, height = 8)
