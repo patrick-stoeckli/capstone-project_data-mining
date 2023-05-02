@@ -18,7 +18,7 @@ SubjectBusiness <- SubjectBusiness %>%
   #filter(BusinessNumber %in% BusinessResponsibility$BusinessNumber) %>%
   select(IdSubject, BusinessNumber, TitleDE)
 
-#Filter the MemberCouncilNumber
+#Get the MemberCouncilNumber of the initiator of the motion
 BusinessRole <- BusinessRole %>%   
   #filter(BusinessTypeName == "Motion") %>% #Only take motions into account
   filter(BusinessNumber %in% SubjectBusiness$BusinessNumber) %>% #Take over businesses defined beforehand
