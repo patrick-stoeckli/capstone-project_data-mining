@@ -3,12 +3,12 @@ title: "Capstone Project 'Data Mining in R'"
 author: "Patrick Stöckli (14-103-675)"
 date: "`r Sys.Date()`"
 output:
-  pdf_document:
-    extra_dependencies: subfig
   prettydoc::html_pretty:
     theme: cayman
     highlight: github
     toc: TRUE
+  pdf_document:
+    extra_dependencies: subfig
 urlcolor: blue
 ---
 
@@ -26,11 +26,11 @@ In consultation with the lecturer, I decided to conduct a sentiment analysis of 
 
 This project aims to analyse a limited number of Swiss parliamentarian speeches from the 50th legislation (30.11.2015 - 01.12.2019) and to visualize the results appealingly. The core of the project is a sentiment analysis using ChatGPT from OpenAI. The main questions of this analysis are:
 
-**How positive or negative do politicians speak about the motions of politicians from the own or other parties?**
+**RQ1: How positive or negative do politicians speak about the motions of politicians from the own or other parties?**
 
-**How left or right and conservative or liberal are the statements about the motions and does it depend on the political party the politicians belong to?**
+**RQ2: How left or right and conservative or liberal are the statements about the motions and does it depend on the political party the politicians belong to?**
 
-**How complex and formal is the use of language of politicians in their statements about motions and does it depend on the political party the politicians belong to?**
+**RQ3: How complex and formal is the use of language of politicians in their statements about motions and does it depend on the political party the politicians belong to?**
 
 Due to time, monetary and computational power constraints, I limit my analysis on one legislation (50th) as well on one political instrument in the parliament (motion). With a motion, a member of parliament demands that the government prepares an amendment to the law, a resolution in accordance with federal law, or take a specific measures. This request is binding if the parliament agrees to it. The focus on this powerful instrument (where politicians are likely to choose their words even more wisely) therefore also makes sense from a political science point of view.
 
@@ -76,9 +76,9 @@ One should also be aware that such an analysis with ChatGPT can become not only 
 
 ## Results
 
-The following plots visualize the results. While this part only contents the latter ones, the next part discusses them.
+While this part only contents the plots which visualize the results, the next part discusses them.
 
-```{r, fig.show='hold',out.width='50%', fig.cap='Research question 1'}
+```{r, fig.show='hold',out.width='50%', fig.cap='RQ1'}
 
 knitr::include_graphics("../output/plots/speeches_NR_rq1.png")
 knitr::include_graphics("../output/plots/speeches_SR_rq1.png")
@@ -86,7 +86,7 @@ knitr::include_graphics("../output/plots/speeches_SR_rq1.png")
 ```
 
 
-```{r, fig.show='hold',out.width='50%', fig.cap='Research question 2'}
+```{r, fig.show='hold',out.width='50%', fig.cap='RQ2'}
 
 knitr::include_graphics("../output/plots/speeches_NR_rq2.png")
 knitr::include_graphics("../output/plots/speeches_SR_rq2.png")
@@ -94,7 +94,7 @@ knitr::include_graphics("../output/plots/speeches_SR_rq2.png")
 ``` 
 
 
-```{r, fig.show='hold',out.width='50%', fig.cap='Research question 3'}
+```{r, fig.show='hold',out.width='50%', fig.cap='RQ3'}
 
 knitr::include_graphics("../output/plots/speeches_NR_rq3.png")
 knitr::include_graphics("../output/plots/speeches_SR_rq3.png")
@@ -103,10 +103,16 @@ knitr::include_graphics("../output/plots/speeches_SR_rq3.png")
 
 ## Discussion 
 
-In the end, the application itself worked well. However, the results are to some extent surprising and hence one could doubt if the ChatGPT algorithm is really capable to run such an sentiment analysis or if the messages i.e. instructions that were sent to ChatGPT themselves were formulated well enough in the sense to get the most accurate results. 
+Regarding RQ1, one can say that the results are literally more positive than one would expect them to be, especially in the Council of States. Surprisingly, politicians do not speak negative about the motions of politicians from other parties in the so called 'chambre the réflexion'. This is especially surprising as the second chamber (also in Switzerland) is usually the one that deters the implementation of new laws more often than the Nation Council. However, this result might also reflect the less harsh tone that is used instead of the actual discrepancies regarding the content. In contrast, two different patterns can be observed in the National Council: While politicians from left parties tend to speak negative about each others motions, politicians from right parties tend to speak more positive about the motions of other parties. One exemption from this is the SVP, which tends to speak negative about the motions of politicians from other parties in general.
+
+Regarding RQ2, no real pattern can be observed: People from all parties use statements that can be categorized in all parts of the political spectrum. One reason for this result could be that political statements are more in line with the party only for certain topics, hence a more detailed analysis would be necessary to get more adequate results. 
+
+Regarding RQ3, no differences between parties and the both councils can be found. The statements are on average surprisingly moderate. However, the use of formal language is pretty common. 
+
+The results are to some extent surprising and hence one can doubt if the ChatGPT algorithm is fully capable to run such an sentiment analysis or if the messages i.e. instructions that were sent to ChatGPT themselves were formulated well enough to get the most accurate results. 
 
 ## Conclusion
 
-I would say that I learned a lot in this project. As mentioned above, the aim of this project was to autonomously develop an innovative and ambitious data mining project working with a reproducible workflow using RStudio projects and GitHub. Although the analysis as well as its results may come with a grain of salt, it was an interesting and instructive exercise from the technical point of view.
+As mentioned above, the aim of this project was to autonomously develop an innovative and ambitious data mining project working with a reproducible workflow using RStudio projects and GitHub. I would say that I learned a lot during this project. In the end, the original idea could also be implemented. Although the analysis as well as its results may come with a grain of salt, it was a very interesting and instructive exercise from the technical point of view.
 
-In a further project, I would definitely run the computational intensive codes at several computers at the same time and then merge the results from the different subsets together more often, as working with GitHub facilitates such an approach a lot. In a further project, I would definitely also spent more time to find out how ChatGPT gives the most accurate answers regarding the content of the sentiment analysis.
+In a further project, I would definitely run the computational intensive codes at several computers at the same time and then merge the results from the different subsets together, as working with GitHub facilitates such an approach a lot. In a further project, I would definitely also spent more time to find out how the accuracy of the results can be increased.
