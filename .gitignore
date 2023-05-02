@@ -50,5 +50,4 @@ po/*~
 rsconnect/
 
 #Ignore the data folder and the credentials folder
-data/
 credentials/
