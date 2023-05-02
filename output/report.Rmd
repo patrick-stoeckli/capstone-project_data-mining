@@ -78,7 +78,7 @@ One should also be aware that such an analysis with ChatGPT can become not only 
 
 While this part only contents the plots which visualize the results, the next part discusses them.
 
-```{r, fig.show='hold',out.width='50%', fig.cap='RQ1'}
+```{r, fig.show='hold',out.width='50%', fig.cap='This heatmap visualizes the results for RQ1'}
 
 knitr::include_graphics("../output/plots/speeches_NR_rq1.png")
 knitr::include_graphics("../output/plots/speeches_SR_rq1.png")
@@ -86,7 +86,7 @@ knitr::include_graphics("../output/plots/speeches_SR_rq1.png")
 ```
 
 
-```{r, fig.show='hold',out.width='50%', fig.cap='RQ2'}
+```{r, fig.show='hold',out.width='50%', fig.cap='This political map visualizes the results for RQ2'}
 
 knitr::include_graphics("../output/plots/speeches_NR_rq2.png")
 knitr::include_graphics("../output/plots/speeches_SR_rq2.png")
@@ -94,7 +94,7 @@ knitr::include_graphics("../output/plots/speeches_SR_rq2.png")
 ``` 
 
 
-```{r, fig.show='hold',out.width='50%', fig.cap='RQ3'}
+```{r, fig.show='hold',out.width='50%', fig.cap='This barplot visualizes the results for RQ3'}
 
 knitr::include_graphics("../output/plots/speeches_NR_rq3.png")
 knitr::include_graphics("../output/plots/speeches_SR_rq3.png")
