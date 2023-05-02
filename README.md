@@ -19,7 +19,7 @@ Here you find all the .R-files, numbered accordingly to the steps in the project
 
 [credentials](credentials)
 
-Note that this folder is empty. You must put an .txt in this folder which is named *openAI_api-key* and includes your own secret API key from OpenAI. You can create an own OpenAI key [here](https://platform.openai.com/account/api-keys). Note that the amount of free usage is limited.
+Note that this folder is almost empty. You must put an .txt in this folder which is named *openAI_api-key* and includes your own secret API key from OpenAI. You can create an own OpenAI key [here](https://platform.openai.com/account/api-keys). Note that the amount of free usage is limited.
 
 [data](data)
 
